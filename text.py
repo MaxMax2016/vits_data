@@ -3,7 +3,7 @@ import textgrid
 
 
 def add_line(txt_path, text):
-    with open(txt_path, "a") as f:
+    with open(txt_path, "a", encoding='utf-8') as f:
         f.write(str(text) + "\n")
 
 
@@ -48,3 +48,14 @@ for wav_path, raw_text in zip(wav_paths, raw_texts):
         del (out_text[0])
     result = "".join(out_text)
     add_line(f"{project_path}/{project_name}_align.txt", f"{wav_path}|{pro_id}|{result}")
+f_train = open(f"{project_path}/{project_name}_train.txt", "w", encoding='utf-8')
+f_val = open(f"{project_path}/{project_name}_val.txt", "w", encoding='utf-8')
+with open(f"{project_path}/{project_name}_align.txt", "r", encoding='utf-8') as f:
+    raw = f.readlines()
+    for line in raw:
+        if "/train/" in line:
+            f_train.write(line)
+        else:
+            f_val.write(line)
+f_train.close()
+f_val.close()
