@@ -1,6 +1,6 @@
 0、https://github.com/PaddlePaddle/PaddleSpeech/blob/develop/docs/source/install_cn.md 自行安装paddlespeech及cuda、cudnn
 1、按照demo格式打包zip，单声道22050wav
-2、mfa.zip解压成mfa文件夹，解压出的demo文件夹，放在mfa文件夹里
+2、解压出的demo文件夹，放在mfa文件夹里
 3、更改main文件夹中工程名，运行main.py
 3.5、进入mfa，编辑0/1mfa.bat，把里面的./qiu/wavs/train，换成./你的工程名/wavs/train，后面同理
 4、依次运行0/1mfa.bat，会在/mfa/demo自动生成/demo/tr(va)/train/xxx.textgrid，等待一会，出错则删除相应文件夹并重复一次
