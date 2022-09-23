@@ -79,7 +79,7 @@ def create_map_txt(txt_path):
 
 
 # 并发线程数，i5-8300h、gtx1066这两个刚好支持4线程且有冗余，可试运行一次参考资源利用率自行估计
-THREADMAX = threading.BoundedSemaphore(8)
+THREADMAX = threading.BoundedSemaphore(1)
 
 pro_id = 0
 project_name = "qiu"
