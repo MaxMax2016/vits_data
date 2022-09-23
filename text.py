@@ -1,4 +1,5 @@
 import os
+import config
 import textgrid
 
 
@@ -7,9 +8,10 @@ def add_line(txt_path, text):
         f.write(str(text) + "\n")
 
 
-project_name = "qiu"
-pro_id = 0
-project_path = f"./mfa/{project_name}"
+pro_id = config.pro_id
+project_name = config.project_name
+project_path = config.project_path
+
 wav_paths = []
 raw_texts = []
 file = open(f"{project_path}/{project_name}_align.txt", "w", encoding='utf-8').close()
@@ -18,7 +20,7 @@ with open(f"{project_path}/{project_name}.txt", "r", encoding='utf-8') as f:
     for line in raw:
         wav_paths.append(line.split("|")[0])
         raw_texts.append(line.split("|")[-1])
-
+# 遍历textgrid，按时间分配停顿符号
 for wav_path, raw_text in zip(wav_paths, raw_texts):
     tg = textgrid.TextGrid()
     try:
@@ -48,6 +50,7 @@ for wav_path, raw_text in zip(wav_paths, raw_texts):
         del (out_text[0])
     result = "".join(out_text)
     add_line(f"{project_path}/{project_name}_align.txt", f"{wav_path}|{pro_id}|{result}")
+# 输出filelist
 f_train = open(f"{project_path}/{project_name}_train.txt", "w", encoding='utf-8')
 f_val = open(f"{project_path}/{project_name}_val.txt", "w", encoding='utf-8')
 with open(f"{project_path}/{project_name}_align.txt", "r", encoding='utf-8') as f:
