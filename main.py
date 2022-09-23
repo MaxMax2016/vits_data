@@ -1,5 +1,6 @@
 import os
 import re
+import time
 import config
 import pathlib
 import soundfile
@@ -9,6 +10,17 @@ from pypinyin import lazy_pinyin, Style
 from paddlespeech.cli.asr.infer import ASRExecutor
 
 
+def timeit(func):
+    def run(*args, **kwargs):
+        t = time.time()
+        res = func(*args, **kwargs)
+        print('executing \'%s\' costed %.3fs' % (func.__name__, time.time() - t))
+        return res
+
+    return run
+
+
+@timeit
 def resample_to_16000(audio_path):
     raw_audio, raw_sample_rate = torchaudio.load(audio_path)
     if raw_sample_rate != 16000:
@@ -31,6 +43,7 @@ def get_end_file(dir_path, end):
     return file_lists
 
 
+@timeit
 def paddle_asr(w_path):
     asr = ASRExecutor()
     result = asr(audio_file=pathlib.Path(w_path), force_yes=True)
@@ -40,10 +53,16 @@ def paddle_asr(w_path):
 
 def text_to_lab(w_path, text):
     pinyin_list = lazy_pinyin(text, style=Style.TONE3, neutral_tone_with_five=True)
-    pinyin = " ".join(pinyin_list)
-    print(pinyin)
-    with open(w_path.replace(".wav", ".lab"), "w") as f:
-        f.write(pinyin)
+    temp = []
+    for x in pinyin_list:
+        if x in pinyin_dict:
+            temp.append(x)
+        elif x[-1] == "5":
+            temp.append(x.replace("5", "1"))
+    temp = " ".join(temp)
+    lab_path = w_path.replace(".wav", ".lab")
+    with open(lab_path, "w") as f:
+        f.write(temp)
 
 
 def wav_to_text(w_path):
@@ -85,8 +104,8 @@ file_list = get_end_file(f"{project_path}", "wav")
 count = 0
 # asr遍历
 for wav_path in file_list:
-    resample_to_16000(wav_path)
     if wav_path not in history:
+        resample_to_16000(wav_path)
         THREADMAX.acquire()
         thd = threading.Thread(target=wav_to_text, args=(wav_path,))
         thd.start()
@@ -98,3 +117,4 @@ with open(f"{project_path}/{project_name}.txt", "r") as f:
     for line in raw:
         data = line.replace("\n", "").split("|")
         text_to_lab(data[0], data[-1])
+print("out lab file")
