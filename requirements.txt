@@ -1,4 +1,3 @@
 torch
 zhconv
-whisper
 soundfile
