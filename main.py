@@ -85,7 +85,7 @@ pro_id = 0
 project_name = "qiu"
 project_path = f"./{project_name}"
 dev = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = whisper.load_model("medium").to(dev)
+model = whisper.load_model("large").to(dev)
 
 history = create_map_txt(f"{project_path}/{project_name}.txt")
 file_list = get_end_file(f"{project_path}", "wav")
